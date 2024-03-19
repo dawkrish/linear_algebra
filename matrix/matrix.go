@@ -3,7 +3,6 @@ package matrix
 import (
 	"errors"
 	"fmt"
-	"math"
 )
 
 // Returns a matrix with m-rows & n-cols
@@ -49,6 +48,17 @@ func Transpose(A [][]int) [][]int {
 	return matrix
 }
 
+func Determinant(A [][]int) (int, error) {
+	if NumberOfRows(A) != NumberOfCols(A) {
+		return 0, errors.New("number of rows != number of cols")
+	}
+	det := 0
+	for i := 0; i < NumberOfRows(A); i++ {
+
+	}
+	return det, nil
+}
+
 // Returns number of rows
 func NumberOfRows(matrix [][]int) int {
 	return len(matrix)
@@ -92,6 +102,7 @@ func Multiply(A, B [][]int) ([][]int, error) {
 	m := NumberOfRows(A)
 	n := NumberOfCols(A)
 	p := NumberOfCols(B)
+
 	C := NewMatrix(m, p)
 
 	for i := 0; i < m; i++ {
@@ -124,14 +135,21 @@ func Print(A [][]int) {
 	}
 }
 
-func largestNumber(A [][]int) int {
-	var max = math.MinInt
-	for i := 0; i < NumberOfRows(A); i++ {
-		for j := 0; j < NumberOfCols(A); j++ {
-			if A[i][j] > max {
-				max = A[i][j]
-			}
+func RowEchelonForm(A [][]int) [][]int {
+	matrix := Copy(A)
+
+	return matrix
+}
+
+func Copy(A [][]int) [][]int {
+	m := NumberOfRows(A)
+	n := NumberOfCols(A)
+	matrix := NewMatrix(m, n)
+
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			matrix[i][j] = A[i][j]
 		}
 	}
-	return max
+	return matrix
 }
