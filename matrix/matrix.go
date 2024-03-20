@@ -7,10 +7,10 @@ import (
 
 // Returns a matrix with m-rows & n-cols
 // All the elements are 0
-func NewMatrix(m, n int) [][]int {
-	var matrix [][]int
+func NewMatrix(m, n int) [][]float64 {
+	var matrix [][]float64
 	for i := 0; i < m; i++ {
-		var row []int
+		var row []float64
 		for j := 0; j < n; j++ {
 			row = append(row, 0)
 		}
@@ -21,7 +21,7 @@ func NewMatrix(m, n int) [][]int {
 
 // Returns a matrix with n-rows & n-cols.
 // Diagonal Elements are 1 , rest are 0
-func NewIdentityMatrix(n int) [][]int {
+func NewIdentityMatrix(n int) [][]float64 {
 	matrix := NewMatrix(n, n)
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
@@ -35,8 +35,26 @@ func NewIdentityMatrix(n int) [][]int {
 	return matrix
 }
 
+func GetRowAt(index int, A [][]float64) ([]float64, error) {
+	if index < 0 || index >= NumberOfRows(A) {
+		return []float64{}, errors.New("index out of range")
+	}
+	return A[index], nil
+}
+
+func GetColumnAt(index int, A [][]float64) ([]float64, error) {
+	if index < 0 || index >= NumberOfCols(A) {
+		return []float64{}, errors.New("index out of range")
+	}
+	col := []float64{}
+	for i := 0; i < NumberOfRows(A); i++ {
+		col = append(col, A[i][index])
+	}
+	return col, nil
+}
+
 // Returns matrix which belongs to n x m
-func Transpose(A [][]int) [][]int {
+func Transpose(A [][]float64) [][]float64 {
 	m := NumberOfRows(A)
 	n := NumberOfCols(A)
 	matrix := NewMatrix(n, m)
@@ -48,7 +66,7 @@ func Transpose(A [][]int) [][]int {
 	return matrix
 }
 
-func Determinant(A [][]int) (int, error) {
+func Determinant(A [][]float64) (int, error) {
 	if NumberOfRows(A) != NumberOfCols(A) {
 		return 0, errors.New("number of rows != number of cols")
 	}
@@ -60,23 +78,26 @@ func Determinant(A [][]int) (int, error) {
 }
 
 // Returns number of rows
-func NumberOfRows(matrix [][]int) int {
+func NumberOfRows(matrix [][]float64) int {
 	return len(matrix)
 }
 
 // Returns number of cols
-func NumberOfCols(matrix [][]int) int {
+func NumberOfCols(matrix [][]float64) int {
+	if len(matrix) == 0 {
+		return 0
+	}
 	return len(matrix[0])
 }
 
 // Returns error if the matrixes are of not same dimensions
 // Returns C = A + B, where C[i][j] = A[i][j] + B[i][j]
-func Addition(A, B [][]int) ([][]int, error) {
+func Addition(A, B [][]float64) ([][]float64, error) {
 	if NumberOfRows(A) != NumberOfRows(B) {
-		return [][]int{}, errors.New("number of rows are different")
+		return [][]float64{}, errors.New("number of rows are different")
 	}
 	if NumberOfCols(A) != NumberOfCols(B) {
-		return [][]int{}, errors.New("number of col are different")
+		return [][]float64{}, errors.New("number of col are different")
 	}
 
 	m := NumberOfRows(A)
@@ -94,9 +115,9 @@ func Addition(A, B [][]int) ([][]int, error) {
 
 // Returns error if the matrixes don't follow dimensions for multiplaction
 // Returns C = A*B, where C[i][j] = A[i][k]*B[k][j]
-func Multiply(A, B [][]int) ([][]int, error) {
+func Multiply(A, B [][]float64) ([][]float64, error) {
 	if NumberOfCols(A) != NumberOfRows(B) {
-		return [][]int{}, errors.New("number of cols of A != number of rows of B")
+		return [][]float64{}, errors.New("number of cols of A != number of rows of B")
 	}
 
 	m := NumberOfRows(A)
@@ -107,17 +128,15 @@ func Multiply(A, B [][]int) ([][]int, error) {
 
 	for i := 0; i < m; i++ {
 		for j := 0; j < p; j++ {
-			var sum int
 			for k := 0; k < n; k++ {
-				sum += (A[i][k] * B[k][j])
+				C[i][j] += (A[i][k] * B[k][j])
 			}
-			C[i][j] = sum
 		}
 	}
 	return C, nil
 }
 
-func Print(A [][]int) {
+func Print(A [][]float64) {
 	m := NumberOfRows(A)
 	n := NumberOfCols(A)
 
@@ -126,7 +145,7 @@ func Print(A [][]int) {
 			if j == 0 {
 				fmt.Print("[")
 			}
-			fmt.Printf("%6d,", A[i][j])
+			fmt.Printf("%6.2f,", A[i][j])
 			if j == n-1 {
 				fmt.Print("]")
 			}
@@ -135,13 +154,7 @@ func Print(A [][]int) {
 	}
 }
 
-func RowEchelonForm(A [][]int) [][]int {
-	matrix := Copy(A)
-
-	return matrix
-}
-
-func Copy(A [][]int) [][]int {
+func Copy(A [][]float64) [][]float64 {
 	m := NumberOfRows(A)
 	n := NumberOfCols(A)
 	matrix := NewMatrix(m, n)
