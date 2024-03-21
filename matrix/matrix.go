@@ -2,7 +2,6 @@ package matrix
 
 import (
 	"errors"
-	"fmt"
 )
 
 // Returns a matrix with m-rows & n-cols
@@ -66,14 +65,14 @@ func Transpose(A [][]float64) [][]float64 {
 	return matrix
 }
 
-func Determinant(A [][]float64) (int, error) {
+func Determinant(A [][]float64) (float64, error) {
 	if NumberOfRows(A) != NumberOfCols(A) {
 		return 0, errors.New("number of rows != number of cols")
 	}
-	det := 0
-	for i := 0; i < NumberOfRows(A); i++ {
-
-	}
+	var det = 1.0
+	refMatrix, detFactor := RowEchelonForm(A)
+	product, _ := ProductOfDiagonalEntries(refMatrix)
+	det = (det * product) / float64(detFactor)
 	return det, nil
 }
 
@@ -136,24 +135,6 @@ func Multiply(A, B [][]float64) ([][]float64, error) {
 	return C, nil
 }
 
-func Print(A [][]float64) {
-	m := NumberOfRows(A)
-	n := NumberOfCols(A)
-
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if j == 0 {
-				fmt.Print("[")
-			}
-			fmt.Printf("%6.2f,", A[i][j])
-			if j == n-1 {
-				fmt.Print("]")
-			}
-		}
-		fmt.Println()
-	}
-}
-
 func Copy(A [][]float64) [][]float64 {
 	m := NumberOfRows(A)
 	n := NumberOfCols(A)
@@ -165,4 +146,39 @@ func Copy(A [][]float64) [][]float64 {
 		}
 	}
 	return matrix
+}
+
+func Trace(A [][]float64) (float64, error) {
+	rows := NumberOfRows(A)
+	cols := NumberOfCols(A)
+	if rows != cols {
+		return 0, errors.New("matrix should have same dimensions")
+	}
+
+	var trace float64
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if i == j {
+				trace += A[i][j]
+			}
+		}
+	}
+	return trace, nil
+}
+func ProductOfDiagonalEntries(A [][]float64) (float64, error) {
+	rows := NumberOfRows(A)
+	cols := NumberOfCols(A)
+	if rows != cols {
+		return 0, errors.New("matrix should have same dimensions")
+	}
+
+	var product float64 = 1.0
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if i == j {
+				product *= A[i][j]
+			}
+		}
+	}
+	return product, nil
 }

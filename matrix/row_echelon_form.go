@@ -1,23 +1,48 @@
 package matrix
 
-import "fmt"
+// import "fmt"
 
-func RowEchelonForm(A [][]float64) [][]float64 {
-	matrix := Copy(A)
-
-	colIndex := LeftMostColumnWithNonZeroEntry(A)
-	column, _ := GetColumnAt(colIndex, A)
-	fmt.Println("Column > ", column)
-	return matrix
-}
-
-func LeftMostColumnWithNonZeroEntry(A [][]float64) int {
+func LeftMostColumnWithNonZeroEntry(A [][]float64, currentRow int) (int, int) {
 	for i := 0; i < NumberOfCols(A); i++ {
-		for j := 0; j < NumberOfRows(A); j++ {
+		for j := currentRow; j < NumberOfRows(A); j++ {
 			if A[j][i] != 0 {
-				return i
+				return j, i
 			}
 		}
 	}
-	return -1
+	return -1, -1
+}
+
+func RowEchelonForm(A [][]float64) ([][]float64, int) {
+	matrix := Copy(A)
+	var determinantFactor = 1
+	rows := NumberOfRows(A)
+
+	for i := 0; i < rows; i++ {
+		r_idx, c_idx := LeftMostColumnWithNonZeroEntry(matrix, i)
+		// r_idx = represents the row_index of the entry which is non-zero; it needs to be same as "i"; or else swap it.
+		// c_idx = represents the col_index of the entry which is non-zero; on that
+		if r_idx == -1 || c_idx == -1 {
+			break
+		}
+		// fmt.Printf("r_idx : %v\tc_idx : %v\n", r_idx, c_idx)
+		if r_idx != i {
+			// fmt.Println("WE ARE HERE")
+			matrix, _ = RowSwitch(r_idx, i, matrix)
+			determinantFactor *= -1
+			// Print(matrix)
+		}
+		column, _ := GetColumnAt(c_idx, matrix)
+
+		for j := r_idx + 1; j < rows; j++ {
+			scalar := -1 * (float64(column[j]) / float64(column[i]))
+			// fmt.Printf("i:%v\tj:%v\tcolumn:%v\n", i, j, column)
+			// fmt.Printf("Numerator:%v\tDenimnator:%v\tScalar:%v\n", float64(column[j]), float64(column[i]), scalar)
+			matrix, _ = RowAddition(scalar, j, i, matrix)
+		}
+
+		// Print(matrix)
+
+	}
+	return matrix, determinantFactor
 }

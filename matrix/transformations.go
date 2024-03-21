@@ -1,6 +1,9 @@
 package matrix
 
-import "errors"
+import (
+	"errors"
+	"math"
+)
 
 // Ri <-> Rj
 func RowSwitch(i, j int, A [][]float64) ([][]float64, error) {
@@ -34,7 +37,7 @@ func RowAddition(scalar float64, i, j int, A [][]float64) ([][]float64, error) {
 	}
 	matrix := Copy(A)
 	for l := 0; l < NumberOfCols(A); l++ {
-		matrix[i][l] += matrix[j][l] * scalar
+		matrix[i][l] = math.Round((matrix[i][l]+matrix[j][l]*scalar)*100000000) / 100000000
 	}
 	return matrix, nil
 }

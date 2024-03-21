@@ -7,26 +7,21 @@ import (
 )
 
 func main() {
-	A := [][]float64{{1, 2, 3}, {1, 4, 5}, {1, 7, 8}}
-	matrix.Print(A)
-	fmt.Println()
-	B, err := matrix.RowSwitch(0, 2, A)
-	if err != nil {
-		fmt.Println("error : ", err)
-	}
+
+	B := [][]float64{
+		{1, 2, -1, 2, 47},
+		{0, 4, 9, 2, -93},
+		{3, 7, 2, 2, 8},
+		{-5, -2, 2, 7, 9},
+		{1, 82, 7, 82, 0}}
 	matrix.Print(B)
 	fmt.Println()
-	C, err := matrix.RowMultiplication(1.0/3, 1, A)
-	if err != nil {
-		fmt.Println("error : ", err)
-	}
+	C, _ := matrix.RowEchelonForm(B)
 	matrix.Print(C)
+	det, _ := matrix.Determinant(B)
 	fmt.Println()
-	D, err := matrix.RowAddition(2, 0, 2, A)
-	matrix.Print(D)
-
-	matrix.RowEchelonForm(A)
-	// fmt.Println(matrix.GetColumnAt(1, A))
-	// fmt.Println(matrix.GetRowAt(1, A))
+	fmt.Println("Determinant : ", det)
 
 }
+
+// [][]float64{{0, 2, -1, 3, 5}, {0, 4, 9, 2, 7}, {0, 7, 2, 5, 4}, {0, -3, 6, 5, 14}}
