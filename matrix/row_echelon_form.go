@@ -22,27 +22,26 @@ func RowEchelonForm(A [][]float64) ([][]float64, int) {
 		r_idx, c_idx := LeftMostColumnWithNonZeroEntry(matrix, i)
 		// r_idx = represents the row_index of the entry which is non-zero; it needs to be same as "i"; or else swap it.
 		// c_idx = represents the col_index of the entry which is non-zero; on that
+
 		if r_idx == -1 || c_idx == -1 {
 			break
 		}
-		// fmt.Printf("r_idx : %v\tc_idx : %v\n", r_idx, c_idx)
 		if r_idx != i {
-			// fmt.Println("WE ARE HERE")
 			matrix, _ = RowSwitch(r_idx, i, matrix)
 			determinantFactor *= -1
-			// Print(matrix)
 		}
 		column, _ := GetColumnAt(c_idx, matrix)
 
 		for j := r_idx + 1; j < rows; j++ {
 			scalar := -1 * (float64(column[j]) / float64(column[i]))
-			// fmt.Printf("i:%v\tj:%v\tcolumn:%v\n", i, j, column)
-			// fmt.Printf("Numerator:%v\tDenimnator:%v\tScalar:%v\n", float64(column[j]), float64(column[i]), scalar)
 			matrix, _ = RowAddition(scalar, j, i, matrix)
 		}
-
-		// Print(matrix)
 
 	}
 	return matrix, determinantFactor
 }
+
+// fmt.Printf("r_idx : %v\tc_idx : %v\n", r_idx, c_idx)
+// fmt.Println("WE ARE HERE")
+// fmt.Printf("i:%v\tj:%v\tcolumn:%v\n", i, j, column)
+// fmt.Printf("Numerator:%v\tDenimnator:%v\tScalar:%v\n", float64(column[j]), float64(column[i]), scalar)

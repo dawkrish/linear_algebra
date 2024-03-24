@@ -157,14 +157,11 @@ func Trace(A [][]float64) (float64, error) {
 
 	var trace float64
 	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			if i == j {
-				trace += A[i][j]
-			}
-		}
+		trace += A[i][i]
 	}
 	return trace, nil
 }
+
 func ProductOfDiagonalEntries(A [][]float64) (float64, error) {
 	rows := NumberOfRows(A)
 	cols := NumberOfCols(A)
@@ -174,11 +171,17 @@ func ProductOfDiagonalEntries(A [][]float64) (float64, error) {
 
 	var product float64 = 1.0
 	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			if i == j {
-				product *= A[i][j]
-			}
-		}
+		product *= A[i][i]
 	}
 	return product, nil
+}
+
+func ScalarMultiplication(scalar float64, A [][]float64) [][]float64 {
+	matrix := Copy(A)
+	for i := 0; i < NumberOfRows(matrix); i++ {
+		for j := 0; j < NumberOfCols(matrix); j++ {
+			matrix[i][j] *= scalar
+		}
+	}
+	return matrix
 }

@@ -26,7 +26,7 @@ func Print(A [][]float64) {
 			if j == n-1 {
 				fmt.Print("]")
 			} else {
-				fmt.Print("\t")
+				fmt.Print(",")
 			}
 		}
 		fmt.Println()
