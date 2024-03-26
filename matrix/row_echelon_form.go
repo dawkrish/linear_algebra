@@ -3,7 +3,7 @@ package matrix
 // import "fmt"
 
 func LeftMostColumnWithNonZeroEntry(A [][]float64, currentRow int) (int, int) {
-	for i := 0; i < NumberOfCols(A); i++ {
+	for i := currentRow; i < NumberOfCols(A); i++ {
 		for j := currentRow; j < NumberOfRows(A); j++ {
 			if A[j][i] != 0 {
 				return j, i
@@ -39,6 +39,39 @@ func RowEchelonForm(A [][]float64) ([][]float64, int) {
 
 	}
 	return matrix, determinantFactor
+}
+
+func ReducedRowEchelonForm(A [][]float64) [][]float64 {
+	matrix := Copy(A)
+	rows := NumberOfRows(A)
+
+	for i := 0; i < rows; i++ {
+		r_idx, c_idx := LeftMostColumnWithNonZeroEntry(matrix, i)
+
+		if r_idx == -1 || c_idx == -1 {
+			break
+		}
+		if r_idx != i {
+			matrix, _ = RowSwitch(r_idx, i, matrix)
+		}
+		if matrix[i][c_idx] != 1 {
+			scalar := 1 / float64(matrix[i][c_idx])
+			matrix, _ = RowMultiplication(scalar, i, matrix)
+		}
+		column, _ := GetColumnAt(c_idx, matrix)
+		for j := r_idx + 1; j < rows; j++ {
+			scalar := -1 * (float64(column[j]) / float64(column[i]))
+			matrix, _ = RowAddition(scalar, j, i, matrix)
+		}
+	}
+
+	// lets clear the upper entries, column wise...
+	cols := NumberOfCols(matrix)
+	for j := cols - 1; j < 0; j-- {
+
+	}
+
+	return matrix
 }
 
 // fmt.Printf("r_idx : %v\tc_idx : %v\n", r_idx, c_idx)

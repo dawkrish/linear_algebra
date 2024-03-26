@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/dawkrish/linear_algebra/matrix"
@@ -12,7 +11,8 @@ func main() {
 		{1, 3, -2, 5},
 		{3, 5, 6, 7},
 		{2, 4, 3, 8}}
-	M, _ := matrix.RowEchelonForm(A)
+	matrix.Print(A)
+	M := matrix.ReducedRowEchelonForm(A)
 	matrix.Print(M)
 
 }
