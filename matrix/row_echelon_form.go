@@ -2,76 +2,78 @@ package matrix
 
 // import "fmt"
 
-func LeftMostColumnWithNonZeroEntry(A [][]float64, currentRow int) (int, int) {
-	for i := currentRow; i < NumberOfCols(A); i++ {
-		for j := currentRow; j < NumberOfRows(A); j++ {
-			if A[j][i] != 0 {
-				return j, i
-			}
-		}
-	}
-	return -1, -1
-}
-
-func RowEchelonForm(A [][]float64) ([][]float64, int) {
+func REF(A [][]float64) ([][]float64, int) {
 	matrix := Copy(A)
-	var determinantFactor = 1
-	rows := NumberOfRows(A)
+	cols := NumberOfCols(A)
+	currentPivotRowIndex := 0
+	determinantFactor := -1
 
-	for i := 0; i < rows; i++ {
-		r_idx, c_idx := LeftMostColumnWithNonZeroEntry(matrix, i)
-		// r_idx = represents the row_index of the entry which is non-zero; it needs to be same as "i"; or else swap it.
-		// c_idx = represents the col_index of the entry which is non-zero; on that
+	for colIndex := 0; colIndex < cols; colIndex++ {
+		foundPivotRowIndex := GetPivotIndex(colIndex, currentPivotRowIndex, matrix)
+		if foundPivotRowIndex == -1 {
+			// skip , as there is no pivot in this column
+		} else {
+			// switch the rows with the "foundPivotRowIndex" with the "currentPivotRowIndex"
+			if foundPivotRowIndex != currentPivotRowIndex {
+				matrix, _ = RowSwitch(foundPivotRowIndex, currentPivotRowIndex, matrix)
+				determinantFactor *= -1
+			}
 
-		if r_idx == -1 || c_idx == -1 {
-			break
+			// scale the below rows ...
+			for i := currentPivotRowIndex + 1; i < NumberOfRows(matrix); i++ {
+				scalar := -1 * float64(matrix[i][colIndex]) / float64(matrix[currentPivotRowIndex][colIndex])
+				matrix, _ = RowAddition(scalar, i, currentPivotRowIndex, matrix)
+
+			}
+			currentPivotRowIndex += 1
 		}
-		if r_idx != i {
-			matrix, _ = RowSwitch(r_idx, i, matrix)
-			determinantFactor *= -1
-		}
-		column, _ := GetColumnAt(c_idx, matrix)
-
-		for j := r_idx + 1; j < rows; j++ {
-			scalar := -1 * (float64(column[j]) / float64(column[i]))
-			matrix, _ = RowAddition(scalar, j, i, matrix)
-		}
-
 	}
 	return matrix, determinantFactor
 }
 
-func ReducedRowEchelonForm(A [][]float64) [][]float64 {
+func RREF(A [][]float64) [][]float64 {
 	matrix := Copy(A)
-	rows := NumberOfRows(A)
+	cols := NumberOfCols(A)
+	currentPivotRowIndex := 0
 
-	for i := 0; i < rows; i++ {
-		r_idx, c_idx := LeftMostColumnWithNonZeroEntry(matrix, i)
+	for colIndex := 0; colIndex < cols; colIndex++ {
+		foundPivotRowIndex := GetPivotIndex(colIndex, currentPivotRowIndex, matrix)
+		if foundPivotRowIndex == -1 {
+			// skip , as there is no pivot in this column
+		} else {
+			// switch the rows with the "foundPivotRowIndex" with the "currentPivotRowIndex"
+			if foundPivotRowIndex != currentPivotRowIndex {
+				matrix, _ = RowSwitch(foundPivotRowIndex, currentPivotRowIndex, matrix)
+			}
 
-		if r_idx == -1 || c_idx == -1 {
-			break
-		}
-		if r_idx != i {
-			matrix, _ = RowSwitch(r_idx, i, matrix)
-		}
-		if matrix[i][c_idx] != 1 {
-			scalar := 1 / float64(matrix[i][c_idx])
-			matrix, _ = RowMultiplication(scalar, i, matrix)
-		}
-		column, _ := GetColumnAt(c_idx, matrix)
-		for j := r_idx + 1; j < rows; j++ {
-			scalar := -1 * (float64(column[j]) / float64(column[i]))
-			matrix, _ = RowAddition(scalar, j, i, matrix)
+			//scale the pivot row !
+			inverseScalar := 1 / float64(matrix[currentPivotRowIndex][colIndex])
+			matrix , _ = RowMultiplication(inverseScalar, currentPivotRowIndex, matrix)
+
+
+			// scale the below rows ...
+			for i := 0; i < NumberOfRows(matrix); i++ {
+				if i == currentPivotRowIndex {
+					continue
+				}
+				scalar := -1 * float64(matrix[i][colIndex]) / float64(matrix[currentPivotRowIndex][colIndex])
+				matrix, _ = RowAddition(scalar, i, currentPivotRowIndex, matrix)
+
+			}
+			currentPivotRowIndex += 1
 		}
 	}
-
-	// lets clear the upper entries, column wise...
-	cols := NumberOfCols(matrix)
-	for j := cols - 1; j < 0; j-- {
-
-	}
-
 	return matrix
+}
+
+func GetPivotIndex(colIndex, rowIndex int, A [][]float64) int {
+	// we need to find the pivot from the "currentRowIndex"
+	for i := rowIndex; i < NumberOfRows(A); i++ {
+		if A[i][colIndex] != 0 {
+			return i
+		}
+	}
+	return -1
 }
 
 // fmt.Printf("r_idx : %v\tc_idx : %v\n", r_idx, c_idx)

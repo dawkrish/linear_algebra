@@ -70,7 +70,7 @@ func Determinant(A [][]float64) (float64, error) {
 		return 0, errors.New("number of rows != number of cols")
 	}
 	var det = 1.0
-	refMatrix, detFactor := RowEchelonForm(A)
+	refMatrix, detFactor := REF(A)
 	product, _ := ProductOfDiagonalEntries(refMatrix)
 	det = (det * product) / float64(detFactor)
 	return det, nil

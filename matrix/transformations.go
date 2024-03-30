@@ -24,7 +24,7 @@ func RowMultiplication(scalar float64, i int, A [][]float64) ([][]float64, error
 		return [][]float64{}, errors.New("k must not be 0")
 	}
 	matrix := Copy(A)
-	for j := 0; j < NumberOfCols(A); j++ {
+	for j := 0; j < NumberOfCols(matrix); j++ {
 		matrix[i][j] *= scalar
 	}
 	return matrix, nil
