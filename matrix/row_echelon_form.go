@@ -1,12 +1,10 @@
 package matrix
 
-// import "fmt"
-
 func REF(A [][]float64) ([][]float64, int) {
 	matrix := Copy(A)
 	cols := NumberOfCols(A)
 	currentPivotRowIndex := 0
-	determinantFactor := -1
+	determinantFactor := 1
 
 	for colIndex := 0; colIndex < cols; colIndex++ {
 		foundPivotRowIndex := GetPivotIndex(colIndex, currentPivotRowIndex, matrix)
@@ -48,8 +46,7 @@ func RREF(A [][]float64) [][]float64 {
 
 			//scale the pivot row !
 			inverseScalar := 1 / float64(matrix[currentPivotRowIndex][colIndex])
-			matrix , _ = RowMultiplication(inverseScalar, currentPivotRowIndex, matrix)
-
+			matrix, _ = RowMultiplication(inverseScalar, currentPivotRowIndex, matrix)
 
 			// scale the below rows ...
 			for i := 0; i < NumberOfRows(matrix); i++ {
