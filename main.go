@@ -1,22 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/dawkrish/linear_algebra/matrix"
 )
 
 func main() {
-	A := [][]float64{{1, 1, 1, 10}, {1, 1, 2, 15}, {1, 1, 4, 20}}
+	A := [][]float64{{1, 2, 1}, {2, 1, 1}, {-1, 2, 1}}
 	matrix.Print(A)
-	println()
+	println(matrix.Determinant(A))
+
 	// M1, _ := matrix.REF(A)
 	// matrix.Print(M1)
 	// fmt.Println()
-	M2 := matrix.RREF(A)
-	matrix.Print(M2)
-	fmt.Println()
 }
 
 func randomMatrix(n int) [][]float64 {
